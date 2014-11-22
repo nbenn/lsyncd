@@ -16,7 +16,6 @@
 #include <sys/times.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <sys/inotify.h>
 #include <dirent.h>
 #include <errno.h>
 #include <fcntl.h>
@@ -35,6 +34,8 @@
 #include <lualib.h>
 #include <lauxlib.h>
 
+#include <linux/inotify.h>
+#include <stdint.h>
 
 /*
 | Event types.

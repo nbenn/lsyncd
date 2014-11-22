@@ -664,8 +664,8 @@ write_pidfile(
 	const char *pidfile
 )
 {
-	pidfile_fd = open( pidfile, O_CREAT | O_RDWR | O_CLOEXEC, 0644 );
-
+	pidfile_fd = open( pidfile, O_CREAT | O_RDWR, 0644 );
+	
 	char buf[ 127 ];
 
 	if( pidfile_fd < 0 )
@@ -679,6 +679,8 @@ write_pidfile(
 		exit( -1 );
 	}
 
+	close_exec_fd( pidfile_fd );
+	
 	int rc = lockf( pidfile_fd, F_TLOCK, 0 );
 
 	if( rc < 0 )

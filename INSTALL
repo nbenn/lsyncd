@@ -40,9 +40,10 @@ Building
 
     mkdir build
     cd build
-    cmake ..
-	make
-    sudo make install
+    cmake -DCMAKE_INSTALL_PREFIX:PATH=/opt/apps/ ..
+	  make
+    make install
+    ln -s /opt/apps/lsyncd/bin/lsyncd /opt/bin/
 
   Building intree:
     cmake .

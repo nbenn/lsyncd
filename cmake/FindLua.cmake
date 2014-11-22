@@ -51,53 +51,28 @@ FOREACH(_SUFFIX ${_POSSIBLE_SUFFIXES})
 ENDFOREACH(_SUFFIX)
 
 # Find the lua executable
-FIND_PROGRAM(LUA_EXECUTABLE
-  NAMES ${_POSSIBLE_LUA_EXECUTABLE}
-)
+FIND_PROGRAM(LUA_EXECUTABLE lua /opt/bin)
 
 # Find the lua header
-FIND_PATH(LUA_INCLUDE_DIR lua.h
-  HINTS
-  $ENV{LUA_DIR}
-  PATH_SUFFIXES ${_POSSIBLE_LUA_INCLUDE}
-  PATHS
-  ~/Library/Frameworks
-  /Library/Frameworks
-  /usr/local
-  /usr
-  /sw # Fink
-  /opt/local # DarwinPorts
-  /opt/csw # Blastwave
-  /opt
-)
+FIND_PATH(LUA_INCLUDE_DIR lua.h /opt/include)
 
 # Find the lua library
-FIND_LIBRARY(LUA_LIBRARY 
-  NAMES ${_POSSIBLE_LUA_LIBRARY}
-  HINTS
-  $ENV{LUA_DIR}
-  PATH_SUFFIXES lib64 lib
-  PATHS
-  ~/Library/Frameworks
-  /Library/Frameworks
-  /usr/local
-  /usr
-  /sw
-  /opt/local
-  /opt/csw
-  /opt
-)
+FIND_LIBRARY(LUA_LIBRARY lua /opt/lib)
 
-IF(LUA_LIBRARY)
-  # include the math library for Unix
-  IF(UNIX AND NOT APPLE)
-    FIND_LIBRARY(LUA_MATH_LIBRARY m)
-    SET( LUA_LIBRARIES "${LUA_LIBRARY};${LUA_MATH_LIBRARY}" CACHE STRING "Lua Libraries")
-  # For Windows and Mac, don't need to explicitly include the math library
-  ELSE(UNIX AND NOT APPLE)
-    SET( LUA_LIBRARIES "${LUA_LIBRARY}" CACHE STRING "Lua Libraries")
-  ENDIF(UNIX AND NOT APPLE)
-ENDIF(LUA_LIBRARY)
+list(APPEND CMAKE_FIND_LIBRARY_SUFFIXES .so.6 .so.2)
+FIND_LIBRARY(LUA_MATH_LIBRARY m /opt/lib)
+FIND_LIBRARY(LUA_LDL_LIBRARY dl /opt/lib)
+
+MESSAGE( STATUS "LUA_EXECUTABLE:   " ${LUA_EXECUTABLE} )
+MESSAGE( STATUS "SUFFIXES:         " ${CMAKE_FIND_LIBRARY_SUFFIXES} )
+MESSAGE( STATUS "LUA_INCLUDE_DIR:  " ${LUA_INCLUDE_DIR} )
+MESSAGE( STATUS "LUA_LIBRARY:      " ${LUA_LIBRARY} )
+MESSAGE( STATUS "LUA_MATH_LIBRARY: " ${LUA_MATH_LIBRARY} )
+MESSAGE( STATUS "LUA_LDL_LIBRARY:  " ${LUA_LDL_LIBRARY} )
+
+SET( LUA_LIBRARIES "${LUA_LIBRARY};${LUA_MATH_LIBRARY};${LUA_LDL_LIBRARY}" CACHE STRING "Lua Libraries")
+
+MESSAGE( STATUS "LUA_LIBRARIES:    " ${LUA_LIBRARIES} )
 
 # Determine Lua version
 IF(LUA_INCLUDE_DIR AND EXISTS "${LUA_INCLUDE_DIR}/lua.h")
